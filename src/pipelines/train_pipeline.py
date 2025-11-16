@@ -4,11 +4,19 @@ import psycopg2
 import os
 import logging
 from dotenv import load_dotenv
+try:
+    from sqlalchemy import create_engine  # type: ignore
+    _SQLA = True
+except Exception:
+    create_engine = None  # type: ignore
+    _SQLA = False
 
 # Import các thư viện tính toán và ML
 import ta
 from xgboost import XGBClassifier
-from sklearn.metrics import classification_report, roc_auc_score
+from sklearn.metrics import classification_report, roc_auc_score, f1_score
+from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
+from src.core.feature_builder import compute_features, FEATURE_COLS
 
 # --- Cấu hình Logging ---
 logging.basicConfig(
@@ -24,6 +32,7 @@ load_dotenv()
 SYMBOL = 'BTC/USDT'
 TIMEFRAME = '1h'
 MODEL_SAVE_PATH = "models/xgb_btc_model.json" # Đường dẫn lưu model
+THRESHOLD_SAVE_PATH = os.getenv("THRESHOLD_PATH", "models/threshold_btc_1h.txt")
 
 # Cấu hình Database
 DB_SETTINGS = {
@@ -56,13 +65,29 @@ def load_data_from_db(conn, symbol, timeframe):
     """
     
     try:
-        # Dùng read_sql_query để tải trực tiếp vào DataFrame
-        df = pd.read_sql_query(
-            query,
-            conn,
-            params=(symbol, timeframe),
-            index_col='time' # Set cột 'time' làm index
-        )
+        if _SQLA and create_engine is not None:
+            user = DB_SETTINGS.get("user") or ""
+            pwd = DB_SETTINGS.get("password") or ""
+            host = DB_SETTINGS.get("host") or "localhost"
+            port = DB_SETTINGS.get("port") or "5432"
+            dbname = DB_SETTINGS.get("dbname") or "postgres"
+            uri = f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}"
+            engine = create_engine(uri)
+            with engine.connect() as eng_conn:
+                df = pd.read_sql_query(
+                    query,
+                    eng_conn,
+                    params=(symbol, timeframe),
+                    index_col='time'
+                )
+        else:
+            # Fallback: dùng psycopg2 connection (có cảnh báo của pandas)
+            df = pd.read_sql_query(
+                query,
+                conn,
+                params=(symbol, timeframe),
+                index_col='time'
+            )
         
         if df.empty:
             logging.warning("Không tìm thấy dữ liệu trong DB.")
@@ -76,42 +101,32 @@ def load_data_from_db(conn, symbol, timeframe):
         return None
 
 def create_features_and_labels(df):
-    """Tạo features và labels từ DataFrame OHLCV."""
+    """Tạo features và labels từ DataFrame OHLCV (mở rộng)."""
     logging.info("Đang tính toán features và labels...")
-    
-    # 1. Tạo Features (giống logic ban đầu của bạn)
-    df['return_1h'] = df['close'].pct_change()
-    df['return_4h'] = df['close'].pct_change(4)
-    df['return_24h'] = df['close'].pct_change(24)
-    df['volatility_24h'] = df['return_1h'].rolling(24).std()
-    df['ma_10'] = df['close'].rolling(10).mean()
-    df['ma_50'] = df['close'].rolling(50).mean()
-    df['rsi_14'] = ta.momentum.RSIIndicator(close=df['close'], window=14).rsi()
-    macd = ta.trend.MACD(close=df['close'])
-    df['macd'] = macd.macd()
-    df['macd_signal'] = macd.macd_signal()
-    
-    # 2. Tạo Label
-    # Dự đoán: Giá có tăng > 1% trong 4 giờ tới không?
-    future_close = df['close'].shift(-4)
-    future_return_4h = (future_close - df['close']) / df['close']
-    df['label'] = (future_return_4h > 0.01).astype(int)
-    
-    # 3. Xóa các dòng NaN (do rolling và shifting)
-    df.dropna(inplace=True)
-    
+    # Bảo đảm có cột 'time'
+    df_in = df.copy()
+    if 'time' not in df_in.columns:
+        df_in = df_in.reset_index()
+    # Tính features mở rộng
+    feats = compute_features(df_in)  # có cột 'time' và FEATURE_COLS
+    feats = feats.dropna(subset=FEATURE_COLS)
+    feats = feats.set_index('time')
+
+    # Tạo label trên chuỗi close gốc (theo 4h tới >1%)
+    price_df = df_in.copy()
+    price_df['time'] = pd.to_datetime(price_df['time'], utc=True, errors='coerce')
+    price_df = price_df.set_index('time').sort_index()
+    future_close = price_df['close'].shift(-4)
+    future_return_4h = (future_close - price_df['close']) / price_df['close']
+    labels = (future_return_4h > 0.01).astype(int).to_frame('label')
+
+    # Căn chỉnh theo time (chỉ các hàng có đủ features)
+    merged = feats.join(labels, how='inner').dropna()
+
     logging.info("Hoàn tất tính toán features và labels.")
-    
-    # 4. Tách X (features) và y (label)
-    feature_cols = [
-        'return_1h', 'return_4h', 'return_24h',
-        'volatility_24h', 'ma_10', 'ma_50',
-        'rsi_14', 'macd', 'macd_signal'
-    ]
-    
-    X = df[feature_cols]
-    y = df['label']
-    
+
+    X = merged[FEATURE_COLS]
+    y = merged['label']
     return X, y
 
 def split_data(X, y, test_size=0.2):
@@ -128,38 +143,99 @@ def split_data(X, y, test_size=0.2):
     
     return X_train, y_train, X_test, y_test
 
-def train_and_evaluate(X_train, y_train, X_test, y_test):
-    """Huấn luyện mô hình XGBoost và đánh giá."""
-    logging.info("Bắt đầu huấn luyện mô hình XGBoost...")
-    
-    model = XGBClassifier(
-        n_estimators=200,
-        max_depth=5,
-        learning_rate=0.05,
-        subsample=0.8,
-        colsample_bytree=0.8,
-        objective='binary:logistic',
-        eval_metric='logloss',
-        n_jobs=-1 # Sử dụng tất cả các core
+def tune_hyperparams(X, y, n_splits=5):
+    """
+    Dùng TimeSeriesSplit + RandomizedSearchCV để tìm bộ hyperparameter tốt.
+    """
+    logging.info("Bắt đầu hyperparameter tuning với TimeSeriesSplit...")
+    tscv = TimeSeriesSplit(n_splits=n_splits)
+    param_dist = {
+        "n_estimators": [100, 200, 300, 500],
+        "max_depth": [3, 4, 5, 6],
+        "learning_rate": [0.01, 0.03, 0.05, 0.1],
+        "subsample": [0.7, 0.8, 1.0],
+        "colsample_bytree": [0.7, 0.8, 1.0],
+        "min_child_weight": [1, 3, 5],
+    }
+    base_model = XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
+        n_jobs=-1,
+        tree_method="hist",
     )
-    
+    search = RandomizedSearchCV(
+        estimator=base_model,
+        param_distributions=param_dist,
+        n_iter=20,
+        scoring="roc_auc",
+        cv=tscv,
+        verbose=1,
+        n_jobs=-1,
+        random_state=42,
+    )
+    search.fit(X, y)
+    logging.info(f"Best AUC: {search.best_score_:.4f}")
+    logging.info(f"Best params: {search.best_params_}")
+    return search.best_params_
+
+
+def find_best_threshold(y_true, y_proba):
+    """
+    Quét nhiều threshold để tìm ngưỡng tốt nhất theo F1-score.
+    """
+    best_th = 0.5
+    best_f1 = -1.0
+    for th in np.linspace(0.3, 0.7, 41):  # quét từ 0.3 → 0.7
+        y_pred = (y_proba > th).astype(int)
+        f1 = f1_score(y_true, y_pred)
+        if f1 > best_f1:
+            best_f1 = f1
+            best_th = th
+    logging.info(f"Best threshold: {best_th:.3f} với F1 = {best_f1:.4f}")
+    return best_th
+
+
+def train_and_evaluate(X_train, y_train, X_test, y_test, use_tuning=True):
+    """Huấn luyện mô hình XGBoost và đánh giá."""
+    if use_tuning:
+        best_params = tune_hyperparams(X_train, y_train)
+    else:
+        best_params = {
+            "n_estimators": 200,
+            "max_depth": 5,
+            "learning_rate": 0.05,
+            "subsample": 0.8,
+            "colsample_bytree": 0.8,
+            "min_child_weight": 1,
+        }
+
+    logging.info("Bắt đầu huấn luyện mô hình XGBoost với best_params...")
+    logging.info(best_params)
+
+    model = XGBClassifier(
+        objective="binary:logistic",
+        eval_metric="logloss",
+        n_jobs=-1,
+        tree_method="hist",
+        **best_params,
+    )
+
     model.fit(X_train, y_train)
     logging.info("Huấn luyện hoàn tất.")
-    
-    # Đánh giá trên tập test
+
+    # Đánh giá
     y_pred_proba = model.predict_proba(X_test)[:, 1]
-    y_pred = (y_pred_proba > 0.5).astype(int)
-    
+    best_th = find_best_threshold(y_test, y_pred_proba)
+    y_pred = (y_pred_proba > best_th).astype(int)
+
     logging.info("--- Kết quả Đánh giá trên Tập Test ---")
     print(classification_report(y_test, y_pred))
-    
+
     auc_score = roc_auc_score(y_test, y_pred_proba)
     logging.info(f"AUC Score: {auc_score:.4f}")
-    
-    # (Tùy chọn) Hiển thị feature importances
-    # ...
-    
-    return model
+    logging.info(f"Threshold sử dụng: {best_th:.3f}")
+
+    return model, best_th
 
 def save_model(model, path):
     """Lưu mô hình đã huấn luyện."""
@@ -196,10 +272,13 @@ def main():
         X_train, y_train, X_test, y_test = split_data(X, y)
 
         # 5. Huấn luyện và Đánh giá
-        model = train_and_evaluate(X_train, y_train, X_test, y_test)
+        model, best_th = train_and_evaluate(X_train, y_train, X_test, y_test)
 
-        # 6. Lưu mô hình
+        # 6. Lưu mô hình + threshold
         save_model(model, MODEL_SAVE_PATH)
+        os.makedirs(os.path.dirname(THRESHOLD_SAVE_PATH) or ".", exist_ok=True)
+        with open(THRESHOLD_SAVE_PATH, "w") as f:
+            f.write(str(best_th))
 
     finally:
         # Đảm bảo đóng kết nối DB dù có lỗi hay không
