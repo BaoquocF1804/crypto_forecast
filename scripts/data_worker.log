@@ -1,0 +1,169 @@
+2025-11-16 23:09:36,392 - ERROR - Lỗi khi kết nối database: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+	Is the server running locally and accepting connections on that socket?
+
+2025-11-16 23:09:36,393 - ERROR - Không thể kết nối DB, worker dừng lại.
+2025-11-16 23:12:30,252 - INFO - Kết nối database thành công.
+2025-11-16 23:12:30,263 - INFO - Worker bắt đầu chạy cho BTC/USDT (1h)...
+2025-11-16 23:12:30,363 - INFO - Không có dữ liệu trong DB, sẽ tải từ đầu.
+2025-11-16 23:12:30,363 - INFO - Đang tải nến mới cho BTC/USDT từ None...
+2025-11-16 23:12:33,942 - INFO - Đã tải được 1000 nến mới.
+2025-11-16 23:12:34,139 - ERROR - Lỗi khi insert vào DB: there is no unique or exclusion constraint matching the ON CONFLICT specification
+
+2025-11-16 23:12:34,139 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:13:31,536 - INFO - Không có dữ liệu trong DB, sẽ tải từ đầu.
+2025-11-16 23:13:31,537 - INFO - Đang tải nến mới cho BTC/USDT từ None...
+2025-11-16 23:13:31,672 - INFO - Đã tải được 1000 nến mới.
+2025-11-16 23:13:31,681 - ERROR - Lỗi khi insert vào DB: there is no unique or exclusion constraint matching the ON CONFLICT specification
+
+2025-11-16 23:13:31,682 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:14:29,103 - INFO - Không có dữ liệu trong DB, sẽ tải từ đầu.
+2025-11-16 23:14:29,106 - INFO - Đang tải nến mới cho BTC/USDT từ None...
+2025-11-16 23:14:29,278 - INFO - Đã tải được 1000 nến mới.
+2025-11-16 23:14:29,292 - ERROR - Lỗi khi insert vào DB: there is no unique or exclusion constraint matching the ON CONFLICT specification
+
+2025-11-16 23:14:29,292 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:15:09,747 - INFO - Worker dừng bởi người dùng.
+2025-11-16 23:15:09,748 - INFO - Worker đã đóng kết nối DB và dừng hẳn.
+2025-11-16 23:16:04,363 - INFO - Kết nối database thành công.
+2025-11-16 23:16:04,372 - INFO - Worker bắt đầu chạy cho BTC/USDT (1h)...
+2025-11-16 23:16:04,383 - INFO - Không có dữ liệu trong DB, sẽ tải từ đầu.
+2025-11-16 23:16:04,384 - INFO - Đang tải nến mới cho BTC/USDT từ None...
+2025-11-16 23:16:06,787 - INFO - Đã tải được 1000 nến mới.
+2025-11-16 23:16:07,228 - INFO - Đã insert/update thành công 1000 nến.
+2025-11-16 23:16:07,228 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:17:04,628 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:17:04,628 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:17:04,765 - INFO - Không có nến mới.
+2025-11-16 23:17:04,769 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:18:02,118 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:18:02,118 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:18:02,227 - INFO - Không có nến mới.
+2025-11-16 23:18:02,228 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:18:59,613 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:18:59,619 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:18:59,792 - INFO - Không có nến mới.
+2025-11-16 23:18:59,794 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:19:57,181 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:19:57,182 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:19:57,289 - INFO - Không có nến mới.
+2025-11-16 23:19:57,289 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:20:54,002 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:20:54,002 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:20:54,113 - INFO - Không có nến mới.
+2025-11-16 23:20:54,113 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:21:52,165 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:21:52,166 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:21:52,272 - INFO - Không có nến mới.
+2025-11-16 23:21:52,273 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:22:49,640 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:22:49,641 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:22:49,758 - INFO - Không có nến mới.
+2025-11-16 23:22:49,759 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:23:47,098 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:23:47,099 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:23:47,211 - INFO - Không có nến mới.
+2025-11-16 23:23:47,212 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:24:44,531 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:24:44,531 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:24:44,641 - INFO - Không có nến mới.
+2025-11-16 23:24:44,642 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:25:41,983 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:25:41,984 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:25:42,094 - INFO - Không có nến mới.
+2025-11-16 23:25:42,095 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:25:43,661 - INFO - Worker dừng bởi người dùng.
+2025-11-16 23:25:43,666 - INFO - Worker đã đóng kết nối DB và dừng hẳn.
+2025-11-16 23:25:50,651 - INFO - Kết nối database thành công.
+2025-11-16 23:25:50,660 - INFO - Worker bắt đầu chạy cho BTC/USDT (1h)...
+2025-11-16 23:25:50,695 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:25:50,695 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:25:53,030 - INFO - Không có nến mới.
+2025-11-16 23:25:53,030 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:26:50,414 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:26:50,414 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:26:50,540 - INFO - Không có nến mới.
+2025-11-16 23:26:50,541 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:27:24,641 - INFO - Worker dừng bởi người dùng.
+2025-11-16 23:27:24,641 - INFO - Worker đã đóng kết nối DB và dừng hẳn.
+2025-11-16 23:34:34,919 - INFO - Kết nối database thành công.
+2025-11-16 23:34:34,945 - INFO - Worker bắt đầu chạy cho BTC/USDT (1h)...
+2025-11-16 23:34:35,175 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:34:35,175 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:34:40,897 - INFO - Không có nến mới.
+2025-11-16 23:34:40,897 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:35:38,260 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:35:38,260 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:35:38,367 - INFO - Không có nến mới.
+2025-11-16 23:35:38,368 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:36:35,696 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:36:35,697 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:36:35,809 - INFO - Không có nến mới.
+2025-11-16 23:36:35,809 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:37:33,104 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:37:33,104 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:37:33,226 - INFO - Không có nến mới.
+2025-11-16 23:37:33,226 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:38:30,590 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:38:30,590 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:38:30,710 - INFO - Không có nến mới.
+2025-11-16 23:38:30,710 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:39:28,533 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:39:28,695 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:39:29,168 - INFO - Không có nến mới.
+2025-11-16 23:39:29,169 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:40:26,492 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:40:26,493 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:40:26,613 - INFO - Không có nến mới.
+2025-11-16 23:40:26,613 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:41:23,979 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:41:23,986 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:41:24,136 - INFO - Không có nến mới.
+2025-11-16 23:41:24,136 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:42:21,460 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:42:21,463 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:42:21,592 - INFO - Không có nến mới.
+2025-11-16 23:42:21,592 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:43:18,921 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:43:18,921 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:43:19,034 - INFO - Không có nến mới.
+2025-11-16 23:43:19,034 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:44:16,323 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:44:16,324 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:44:16,439 - INFO - Không có nến mới.
+2025-11-16 23:44:16,440 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:45:13,742 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:45:13,743 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:45:13,857 - INFO - Không có nến mới.
+2025-11-16 23:45:13,857 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:46:10,506 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:46:10,506 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:46:10,615 - INFO - Không có nến mới.
+2025-11-16 23:46:10,615 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:47:08,654 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:47:08,654 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:47:08,766 - INFO - Không có nến mới.
+2025-11-16 23:47:08,767 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:48:06,043 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:48:06,044 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:48:06,161 - INFO - Không có nến mới.
+2025-11-16 23:48:06,161 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:49:03,507 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:49:03,507 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:49:03,622 - INFO - Không có nến mới.
+2025-11-16 23:49:03,622 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:50:00,274 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:50:00,275 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:50:00,391 - INFO - Không có nến mới.
+2025-11-16 23:50:00,391 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:50:58,406 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:50:58,406 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:50:58,513 - INFO - Không có nến mới.
+2025-11-16 23:50:58,513 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:51:55,813 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:51:55,813 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:51:55,927 - INFO - Không có nến mới.
+2025-11-16 23:51:55,928 - INFO - Worker nghỉ 60 giây.
+2025-11-16 23:52:53,224 - INFO - Timestamp cuối cùng trong DB: 2025-11-16 16:00:00+00:00 (1763308800000)
+2025-11-16 23:52:53,228 - INFO - Đang tải nến mới cho BTC/USDT từ 1763308800001...
+2025-11-16 23:52:53,344 - INFO - Không có nến mới.
+2025-11-16 23:52:53,344 - INFO - Worker nghỉ 60 giây.
