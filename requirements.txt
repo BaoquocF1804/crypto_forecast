@@ -8,3 +8,4 @@ scikit-learn
 xgboost
 ta
 ccxt
+psycopg2-binary

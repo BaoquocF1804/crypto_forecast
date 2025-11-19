@@ -248,8 +248,26 @@ def save_model(model, path):
     except Exception as e:
         logging.error(f"Lỗi khi lưu mô hình: {e}")
 
+import argparse
+
 def main():
     """Hàm chính điều phối toàn bộ pipeline."""
+    parser = argparse.ArgumentParser(description="Train crypto forecast model")
+    parser.add_argument("--symbol", type=str, default="BTC/USDT", help="Symbol to train (e.g. BTC/USDT)")
+    parser.add_argument("--timeframe", type=str, default="1h", help="Timeframe to train (e.g. 1h, 4h, 1d)")
+    args = parser.parse_args()
+    
+    symbol = args.symbol
+    timeframe = args.timeframe
+    coin = symbol.split("/")[0].lower()
+    
+    # Dynamic paths
+    model_save_path = f"models/xgb_{coin}_{timeframe}_model.json"
+    threshold_save_path = f"models/threshold_{coin}_{timeframe}.txt"
+    
+    logging.info(f"Bắt đầu training cho {symbol} ({timeframe})...")
+    logging.info(f"Model sẽ được lưu tại: {model_save_path}")
+
     conn = None
     try:
         # 1. Kết nối DB
@@ -258,7 +276,7 @@ def main():
             return
 
         # 2. Tải dữ liệu
-        df = load_data_from_db(conn, SYMBOL, TIMEFRAME)
+        df = load_data_from_db(conn, symbol, timeframe)
         if df is None:
             return
 
@@ -275,9 +293,9 @@ def main():
         model, best_th = train_and_evaluate(X_train, y_train, X_test, y_test)
 
         # 6. Lưu mô hình + threshold
-        save_model(model, MODEL_SAVE_PATH)
-        os.makedirs(os.path.dirname(THRESHOLD_SAVE_PATH) or ".", exist_ok=True)
-        with open(THRESHOLD_SAVE_PATH, "w") as f:
+        save_model(model, model_save_path)
+        os.makedirs(os.path.dirname(threshold_save_path) or ".", exist_ok=True)
+        with open(threshold_save_path, "w") as f:
             f.write(str(best_th))
 
     finally:

@@ -7,8 +7,6 @@ import time
 import os
 import logging
 from dotenv import load_dotenv
-
-# Import thêm thư viện cho tính toán feature
 import ta
 import numpy as np
 
@@ -26,12 +24,9 @@ logging.basicConfig(
 load_dotenv()
 
 # --- Cấu hình Worker ---
-SYMBOL = 'BTC/USDT'
-TIMEFRAME = '1h'
+SYMBOLS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ADA/USDT']
+TIMEFRAMES = ['1h', '4h', '1d']
 SLEEP_INTERVAL = 60  # Giây
-# Cần bao nhiêu nến lịch sử để tính feature?
-# ma_50 là dài nhất -> cần 50.
-# Thêm buffer 50 cho các chỉ báo (EMA, RSI...) "warm-up".
 FEATURE_LOOKBACK_PERIOD = 100 
 
 # --- Cấu hình Database (lấy từ .env) ---
@@ -150,9 +145,6 @@ def process_and_insert_candles(conn, ohlcv_data, symbol, timeframe):
         logging.error(f"Lỗi khi insert vào 'candles': {e}")
         return None
 
-# ============================================
-# HÀM MỚI: TÍNH TOÁN VÀ LƯU FEATURES
-# ============================================
 def calculate_and_save_features(conn, new_candles_df, symbol, timeframe):
     """
     Tính toán features cho các nến mới, dựa trên dữ liệu lịch sử
@@ -243,9 +235,6 @@ def calculate_and_save_features(conn, new_candles_df, symbol, timeframe):
         conn.rollback()
         logging.error(f"Lỗi khi tính toán/lưu features: {e}")
 
-# ============================================
-# VÒNG LẶP CHÍNH (Đã cập nhật)
-# ============================================
 def main_worker_loop():
     """Vòng lặp chính của worker."""
     
@@ -255,31 +244,42 @@ def main_worker_loop():
         return
 
     exchange = ccxt.binance()
-    logging.info(f"Worker bắt đầu chạy cho {SYMBOL} ({TIMEFRAME})...")
+    logging.info(f"Worker bắt đầu chạy cho {SYMBOLS} với các timeframe {TIMEFRAMES}...")
 
     while True:
         try:
-            # 1. Kiểm tra nến cuối cùng
-            last_ts = get_last_timestamp(conn, SYMBOL, TIMEFRAME)
-            since_ts = (last_ts + 1) if last_ts else None 
+            for symbol in SYMBOLS:
+                for timeframe in TIMEFRAMES:
+                    try:
+                        logging.info(f"--- Xử lý {symbol} ({timeframe}) ---")
+                        # 1. Kiểm tra nến cuối cùng
+                        last_ts = get_last_timestamp(conn, symbol, timeframe)
+                        since_ts = (last_ts + 1) if last_ts else None 
+                        
+                        # 2. Tải nến mới
+                        new_ohlcv = fetch_new_candles(exchange, symbol, timeframe, since_ts)
+                        
+                        if new_ohlcv:
+                            # 3. Lưu nến MỚI, và lấy về DataFrame của chúng
+                            new_candles_df = process_and_insert_candles(
+                                conn, new_ohlcv, symbol, timeframe
+                            )
+                            
+                            # 4. TÍCH HỢP: Nếu lưu nến thành công, tính feature
+                            if new_candles_df is not None and not new_candles_df.empty:
+                                calculate_and_save_features(
+                                    conn, new_candles_df, symbol, timeframe
+                                )
+                        
+                        # Nghỉ ngắn giữa các request
+                        time.sleep(1) 
+                        
+                    except Exception as e:
+                        logging.error(f"Lỗi khi xử lý {symbol} - {timeframe}: {e}")
+                        continue
             
-            # 2. Tải nến mới
-            new_ohlcv = fetch_new_candles(exchange, SYMBOL, TIMEFRAME, since_ts)
-            
-            if new_ohlcv:
-                # 3. Lưu nến MỚI, và lấy về DataFrame của chúng
-                new_candles_df = process_and_insert_candles(
-                    conn, new_ohlcv, SYMBOL, TIMEFRAME
-                )
-                
-                # 4. TÍCH HỢP: Nếu lưu nến thành công, tính feature
-                if new_candles_df is not None and not new_candles_df.empty:
-                    calculate_and_save_features(
-                        conn, new_candles_df, SYMBOL, TIMEFRAME
-                    )
-            
-            # 5. Chờ
-            logging.info(f"Worker nghỉ {SLEEP_INTERVAL} giây.")
+            # 5. Chờ sau khi hết vòng lặp
+            logging.info(f"Hoàn thành vòng lặp. Nghỉ {SLEEP_INTERVAL} giây.")
             time.sleep(SLEEP_INTERVAL)
 
         except psycopg2.OperationalError as db_e:
@@ -296,7 +296,7 @@ def main_worker_loop():
             break
             
         except Exception as e:
-            logging.error(f"Lỗi không xác định trong vòng lặp: {e}")
+            logging.error(f"Lỗi không xác định trong vòng lặp chính: {e}")
             time.sleep(SLEEP_INTERVAL) 
 
     if conn:
