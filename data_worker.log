@@ -1802,3 +1802,152 @@ LINE 2:                 SELECT time FROM candles
 2025-11-19 19:18:21,034 - INFO - Đang tải nến mới cho ADA/USDT từ 1763510400001...
 2025-11-19 19:18:21,146 - INFO - Không có nến mới.
 2025-11-19 19:18:22,152 - INFO - Hoàn thành vòng lặp. Nghỉ 60 giây.
+2025-11-19 19:18:46,073 - INFO - --- Xử lý BTC/USDT ---
+2025-11-19 19:18:46,078 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:18:46,078 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:18:46,300 - INFO - Không có nến mới.
+2025-11-19 19:18:47,302 - INFO - --- Xử lý ETH/USDT ---
+2025-11-19 19:18:47,308 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:18:47,308 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:18:47,601 - INFO - Không có nến mới.
+2025-11-19 19:18:48,603 - INFO - --- Xử lý SOL/USDT ---
+2025-11-19 19:18:48,608 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:18:48,609 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:18:48,839 - INFO - Không có nến mới.
+2025-11-19 19:18:49,841 - INFO - --- Xử lý ADA/USDT ---
+2025-11-19 19:18:49,847 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:18:49,847 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:18:50,469 - INFO - Không có nến mới.
+2025-11-19 19:18:51,471 - INFO - Hoàn thành vòng lặp các coin. Nghỉ 60 giây.
+2025-11-19 19:19:19,455 - INFO - --- Xử lý BTC/USDT (1h) ---
+2025-11-19 19:19:19,460 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:19,460 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:19:19,581 - INFO - Không có nến mới.
+2025-11-19 19:19:20,582 - INFO - --- Xử lý BTC/USDT (4h) ---
+2025-11-19 19:19:20,589 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:20,589 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:19:20,711 - INFO - Không có nến mới.
+2025-11-19 19:19:21,713 - INFO - --- Xử lý BTC/USDT (1d) ---
+2025-11-19 19:19:21,719 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:19:21,719 - INFO - Đang tải nến mới cho BTC/USDT từ 1763510400001...
+2025-11-19 19:19:21,843 - INFO - Không có nến mới.
+2025-11-19 19:19:22,844 - INFO - --- Xử lý ETH/USDT (1h) ---
+2025-11-19 19:19:22,851 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:22,851 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:19:23,016 - INFO - Không có nến mới.
+2025-11-19 19:19:24,018 - INFO - --- Xử lý ETH/USDT (4h) ---
+2025-11-19 19:19:24,023 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:24,023 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:19:24,185 - INFO - Không có nến mới.
+2025-11-19 19:19:25,188 - INFO - --- Xử lý ETH/USDT (1d) ---
+2025-11-19 19:19:25,194 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:19:25,195 - INFO - Đang tải nến mới cho ETH/USDT từ 1763510400001...
+2025-11-19 19:19:25,366 - INFO - Không có nến mới.
+2025-11-19 19:19:26,366 - INFO - --- Xử lý SOL/USDT (1h) ---
+2025-11-19 19:19:26,373 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:26,373 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:19:26,653 - INFO - Không có nến mới.
+2025-11-19 19:19:27,654 - INFO - --- Xử lý SOL/USDT (4h) ---
+2025-11-19 19:19:27,660 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:27,660 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:19:27,832 - INFO - Không có nến mới.
+2025-11-19 19:19:28,834 - INFO - --- Xử lý SOL/USDT (1d) ---
+2025-11-19 19:19:28,841 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:19:28,841 - INFO - Đang tải nến mới cho SOL/USDT từ 1763510400001...
+2025-11-19 19:19:29,022 - INFO - Không có nến mới.
+2025-11-19 19:19:30,023 - INFO - --- Xử lý ADA/USDT (1h) ---
+2025-11-19 19:19:30,031 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:30,032 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:19:30,155 - INFO - Không có nến mới.
+2025-11-19 19:19:31,163 - INFO - --- Xử lý ADA/USDT (4h) ---
+2025-11-19 19:19:31,169 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:31,170 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:19:31,287 - INFO - Không có nến mới.
+2025-11-19 19:19:32,291 - INFO - --- Xử lý ADA/USDT (1d) ---
+2025-11-19 19:19:32,298 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:19:32,298 - INFO - Đang tải nến mới cho ADA/USDT từ 1763510400001...
+2025-11-19 19:19:32,407 - INFO - Không có nến mới.
+2025-11-19 19:19:33,408 - INFO - Hoàn thành vòng lặp. Nghỉ 60 giây.
+2025-11-19 19:19:48,767 - INFO - --- Xử lý BTC/USDT ---
+2025-11-19 19:19:48,775 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:48,775 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:19:48,900 - INFO - Không có nến mới.
+2025-11-19 19:19:49,903 - INFO - --- Xử lý ETH/USDT ---
+2025-11-19 19:19:49,910 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:49,910 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:19:50,035 - INFO - Không có nến mới.
+2025-11-19 19:19:51,037 - INFO - --- Xử lý SOL/USDT ---
+2025-11-19 19:19:51,043 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:51,044 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:19:51,166 - INFO - Không có nến mới.
+2025-11-19 19:19:52,171 - INFO - --- Xử lý ADA/USDT ---
+2025-11-19 19:19:52,177 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:19:52,177 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:19:52,310 - INFO - Không có nến mới.
+2025-11-19 19:19:53,311 - INFO - Hoàn thành vòng lặp các coin. Nghỉ 60 giây.
+2025-11-19 19:20:30,731 - INFO - --- Xử lý BTC/USDT (1h) ---
+2025-11-19 19:20:30,737 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:30,737 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:20:30,873 - INFO - Không có nến mới.
+2025-11-19 19:20:31,875 - INFO - --- Xử lý BTC/USDT (4h) ---
+2025-11-19 19:20:31,883 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:31,883 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:20:32,045 - INFO - Không có nến mới.
+2025-11-19 19:20:33,046 - INFO - --- Xử lý BTC/USDT (1d) ---
+2025-11-19 19:20:33,052 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:20:33,052 - INFO - Đang tải nến mới cho BTC/USDT từ 1763510400001...
+2025-11-19 19:20:33,241 - INFO - Không có nến mới.
+2025-11-19 19:20:34,244 - INFO - --- Xử lý ETH/USDT (1h) ---
+2025-11-19 19:20:34,250 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:34,250 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:20:34,364 - INFO - Không có nến mới.
+2025-11-19 19:20:35,365 - INFO - --- Xử lý ETH/USDT (4h) ---
+2025-11-19 19:20:35,373 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:35,373 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:20:35,586 - INFO - Không có nến mới.
+2025-11-19 19:20:36,590 - INFO - --- Xử lý ETH/USDT (1d) ---
+2025-11-19 19:20:36,597 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:20:36,597 - INFO - Đang tải nến mới cho ETH/USDT từ 1763510400001...
+2025-11-19 19:20:36,767 - INFO - Không có nến mới.
+2025-11-19 19:20:37,770 - INFO - --- Xử lý SOL/USDT (1h) ---
+2025-11-19 19:20:37,776 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:37,776 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:20:37,889 - INFO - Không có nến mới.
+2025-11-19 19:20:38,891 - INFO - --- Xử lý SOL/USDT (4h) ---
+2025-11-19 19:20:38,898 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:38,899 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:20:39,021 - INFO - Không có nến mới.
+2025-11-19 19:20:38,650 - INFO - --- Xử lý SOL/USDT (1d) ---
+2025-11-19 19:20:38,658 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:20:38,658 - INFO - Đang tải nến mới cho SOL/USDT từ 1763510400001...
+2025-11-19 19:20:39,136 - INFO - Không có nến mới.
+2025-11-19 19:20:40,140 - INFO - --- Xử lý ADA/USDT (1h) ---
+2025-11-19 19:20:40,146 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:40,146 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:20:40,333 - INFO - Không có nến mới.
+2025-11-19 19:20:41,335 - INFO - --- Xử lý ADA/USDT (4h) ---
+2025-11-19 19:20:41,341 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:41,341 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:20:41,447 - INFO - Không có nến mới.
+2025-11-19 19:20:42,450 - INFO - --- Xử lý ADA/USDT (1d) ---
+2025-11-19 19:20:42,457 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 00:00:00+00:00 (1763510400000)
+2025-11-19 19:20:42,457 - INFO - Đang tải nến mới cho ADA/USDT từ 1763510400001...
+2025-11-19 19:20:42,569 - INFO - Không có nến mới.
+2025-11-19 19:20:43,572 - INFO - Hoàn thành vòng lặp. Nghỉ 60 giây.
+2025-11-19 19:20:50,663 - INFO - --- Xử lý BTC/USDT ---
+2025-11-19 19:20:50,669 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:50,669 - INFO - Đang tải nến mới cho BTC/USDT từ 1763553600001...
+2025-11-19 19:20:50,796 - INFO - Không có nến mới.
+2025-11-19 19:20:51,801 - INFO - --- Xử lý ETH/USDT ---
+2025-11-19 19:20:51,806 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:51,806 - INFO - Đang tải nến mới cho ETH/USDT từ 1763553600001...
+2025-11-19 19:20:51,942 - INFO - Không có nến mới.
+2025-11-19 19:20:52,944 - INFO - --- Xử lý SOL/USDT ---
+2025-11-19 19:20:52,951 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:52,951 - INFO - Đang tải nến mới cho SOL/USDT từ 1763553600001...
+2025-11-19 19:20:53,086 - INFO - Không có nến mới.
+2025-11-19 19:20:54,089 - INFO - --- Xử lý ADA/USDT ---
+2025-11-19 19:20:54,096 - INFO - Timestamp cuối cùng trong DB: 2025-11-19 12:00:00+00:00 (1763553600000)
+2025-11-19 19:20:54,096 - INFO - Đang tải nến mới cho ADA/USDT từ 1763553600001...
+2025-11-19 19:20:54,219 - INFO - Không có nến mới.
+2025-11-19 19:20:55,220 - INFO - Hoàn thành vòng lặp các coin. Nghỉ 60 giây.
