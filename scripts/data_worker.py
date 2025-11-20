@@ -24,9 +24,9 @@ logging.basicConfig(
 load_dotenv()
 
 # --- Cấu hình Worker ---
-SYMBOLS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ADA/USDT']
+SYMBOLS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ADA/USDT', 'XAUT/USDT']
 TIMEFRAMES = ['1h', '4h', '1d']
-SLEEP_INTERVAL = 60  # Giây
+SLEEP_INTERVAL = 3600  # Giây
 FEATURE_LOOKBACK_PERIOD = 100 
 
 # --- Cấu hình Database (lấy từ .env) ---
@@ -243,44 +243,88 @@ def main_worker_loop():
         logging.error("Không thể kết nối DB, worker dừng lại.")
         return
 
-    exchange = ccxt.binance()
+    # Khởi tạo các sàn
+    binance_exchange = ccxt.binance()
+    okx_exchange = ccxt.okx()
+    
     logging.info(f"Worker bắt đầu chạy cho {SYMBOLS} với các timeframe {TIMEFRAMES}...")
 
+                    except Exception as e:
+                        logging.error(f"Lỗi khi xử lý {symbol} - {timeframe}: {e}")
+                        continue
+            
+            # 5. Logic ngủ nghỉ thông minh (Backfill vs Live Update)
+            # Nếu có bất kỳ dữ liệu nào được tải về trong vòng lặp này,
+            # nghĩa là chúng ta có thể đang backfill hoặc vừa có nến mới.
+            # Hãy chạy lại sớm hơn để tải tiếp (backfill) hoặc cập nhật nhanh.
+            # Tuy nhiên, để đơn giản:
+            # Nếu vừa tải được data, nghỉ 5s rồi chạy tiếp.
+            # Nếu KHÔNG tải được data nào (đã up-to-date), nghỉ SLEEP_INTERVAL.
+            
+            # (Cần thêm biến cờ để track việc này, nhưng ở đây tôi sẽ sửa logic đơn giản:
+            # Check xem lần chạy này có nến nào được insert không.
+            # Để làm vậy, tôi sẽ thêm biến `total_candles_inserted` vào đầu vòng lặp)
+
+            pass # Placeholder để giữ cấu trúc, logic thực tế ở dưới
+
     while True:
+        total_candles_inserted = 0 # Reset counter
         try:
             for symbol in SYMBOLS:
+                # Chọn sàn dựa trên symbol
+                if symbol == 'XAUT/USDT':
+                    exchange = okx_exchange
+                    # logging.info(f"Sử dụng sàn OKX cho {symbol}")
+                else:
+                    exchange = binance_exchange
+                    # logging.info(f"Sử dụng sàn Binance cho {symbol}")
+
                 for timeframe in TIMEFRAMES:
                     try:
                         logging.info(f"--- Xử lý {symbol} ({timeframe}) ---")
                         # 1. Kiểm tra nến cuối cùng
                         last_ts = get_last_timestamp(conn, symbol, timeframe)
-                        since_ts = (last_ts + 1) if last_ts else None 
                         
+                        if last_ts:
+                            since_ts = last_ts + 1
+                        else:
+                            # Nếu chưa có dữ liệu, tải từ 365 ngày trước
+                            logging.info("Chưa có dữ liệu, bắt đầu tải từ 1 năm trước (Backfill)...")
+                            since_ts = int((datetime.now().timestamp() - 365*24*3600) * 1000)
+
                         # 2. Tải nến mới
                         new_ohlcv = fetch_new_candles(exchange, symbol, timeframe, since_ts)
                         
                         if new_ohlcv:
-                            # 3. Lưu nến MỚI, và lấy về DataFrame của chúng
+                            # 3. Lưu nến MỚI
                             new_candles_df = process_and_insert_candles(
                                 conn, new_ohlcv, symbol, timeframe
                             )
                             
-                            # 4. TÍCH HỢP: Nếu lưu nến thành công, tính feature
                             if new_candles_df is not None and not new_candles_df.empty:
+                                count = len(new_candles_df)
+                                total_candles_inserted += count
+                                
+                                # 4. Tính feature
                                 calculate_and_save_features(
                                     conn, new_candles_df, symbol, timeframe
                                 )
                         
-                        # Nghỉ ngắn giữa các request
+                        # Nghỉ ngắn giữa các request để tránh rate limit sàn
                         time.sleep(1) 
                         
                     except Exception as e:
                         logging.error(f"Lỗi khi xử lý {symbol} - {timeframe}: {e}")
                         continue
             
-            # 5. Chờ sau khi hết vòng lặp
-            logging.info(f"Hoàn thành vòng lặp. Nghỉ {SLEEP_INTERVAL} giây.")
-            time.sleep(SLEEP_INTERVAL)
+            # 5. Quyết định thời gian nghỉ
+            if total_candles_inserted > 0:
+                logging.info(f"Đã tải thêm {total_candles_inserted} nến trong vòng lặp này.")
+                logging.info("Đang trong quá trình Backfill hoặc cập nhật mạnh. Nghỉ 5 giây rồi chạy tiếp...")
+                time.sleep(5)
+            else:
+                logging.info(f"Dữ liệu đã cập nhật (Up-to-date). Nghỉ {SLEEP_INTERVAL} giây.")
+                time.sleep(SLEEP_INTERVAL)
 
         except psycopg2.OperationalError as db_e:
             logging.error(f"Mất kết nối DB: {db_e}. Thử kết nối lại...")

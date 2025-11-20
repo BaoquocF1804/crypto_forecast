@@ -9,3 +9,4 @@ xgboost
 ta
 ccxt
 psycopg2-binary
+sqlalchemy

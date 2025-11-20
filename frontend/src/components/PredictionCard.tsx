@@ -16,11 +16,17 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, load
 
     if (!prediction) return null;
 
-    const isBuy = prediction.label === 1;
-    const prob = prediction.last_proba;
-    const th = prediction.threshold;
-    const confidence = (prob * 100).toFixed(1);
-    const thresholdPct = (th * 100).toFixed(1);
+    const label = prediction.label;
+    const buyProb = prediction.buy_proba ?? 0;
+    const sellProb = prediction.sell_proba ?? 0;
+
+    // Determine primary probability based on label
+    let primaryProb = 0;
+    if (label === 1) primaryProb = buyProb;
+    else if (label === 2) primaryProb = sellProb;
+    else primaryProb = prediction.last_proba; // Fallback or Neutral prob if we had it
+
+    const confidence = (primaryProb * 100).toFixed(1);
 
     // Calculate Horizon Text
     let horizonText = "Next 4 Periods";
@@ -33,8 +39,9 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, load
     let bgColor = "bg-gray-500/10 border-gray-500/50";
     let Icon = Activity;
 
-    if (isBuy) {
-        if (prob > 0.7) {
+    if (label === 1) {
+        // BUY
+        if (buyProb > 0.7) {
             signalText = "STRONG BUY 🚀";
             signalColor = "text-green-400";
             bgColor = "bg-green-500/20 border-green-500/80 shadow-[0_0_15px_rgba(74,222,128,0.3)]";
@@ -45,18 +52,25 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, load
             bgColor = "bg-green-500/10 border-green-500/50";
             Icon = TrendingUp;
         }
-    } else {
-        if (prob < 0.3) {
-            signalText = "STRONG SELL / AVOID 🛑";
+    } else if (label === 2) {
+        // SELL
+        if (sellProb > 0.7) {
+            signalText = "STRONG SELL 🛑";
+            signalColor = "text-red-500";
+            bgColor = "bg-red-500/20 border-red-500/80 shadow-[0_0_15px_rgba(239,68,68,0.3)]";
+            Icon = TrendingDown;
+        } else {
+            signalText = "SELL SIGNAL";
             signalColor = "text-red-500";
             bgColor = "bg-red-500/10 border-red-500/50";
             Icon = TrendingDown;
-        } else {
-            signalText = "WAIT / NEUTRAL ⏳";
-            signalColor = "text-yellow-500";
-            bgColor = "bg-yellow-500/10 border-yellow-500/50";
-            Icon = Activity;
         }
+    } else {
+        // NEUTRAL
+        signalText = "WAIT / NEUTRAL ⏳";
+        signalColor = "text-yellow-500";
+        bgColor = "bg-yellow-500/10 border-yellow-500/50";
+        Icon = Activity;
     }
 
     return (
@@ -65,7 +79,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, load
                 <div>
                     <h2 className="text-xl font-bold text-white">AI Forecast</h2>
                     <p className="text-xs text-blue-400 font-medium mt-0.5">
-                        Horizon: {horizonText}
+                        Horizon: {horizonText} • Target: {((prediction.target_return ?? 0.01) * 100).toFixed(1)}%
                     </p>
                 </div>
                 <span className="text-xs text-gray-400">
@@ -89,23 +103,41 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ prediction, load
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-2.5 relative">
                         <div
-                            className={clsx("h-2.5 rounded-full transition-all duration-500", isBuy ? "bg-green-500" : "bg-yellow-500")}
-                            style={{ width: `${Math.min(prob * 100, 100)}%` }}
-                        ></div>
-                        {/* Threshold Marker */}
-                        <div
-                            className="absolute top-0 bottom-0 w-0.5 bg-white/50"
-                            style={{ left: `${thresholdPct}%` }}
-                            title={`Threshold: ${thresholdPct}%`}
+                            className={clsx("h-2.5 rounded-full transition-all duration-500",
+                                label === 1 ? "bg-green-500" : label === 2 ? "bg-red-500" : "bg-yellow-500"
+                            )}
+                            style={{ width: `${Math.min(primaryProb * 100, 100)}%` }}
                         ></div>
                     </div>
                     <div className="flex justify-between text-[10px] text-gray-500 mt-1">
                         <span>0%</span>
-                        <span className="text-gray-400">Threshold: {thresholdPct}%</span>
                         <span>100%</span>
                     </div>
                 </div>
             </div>
+
+            {/* Risk Analysis Section */}
+            {prediction.risk_analysis && prediction.risk_analysis.length > 0 && (
+                <div className="bg-gray-900/50 p-4 rounded-lg mb-6">
+                    <div className="flex items-center gap-2 text-gray-400 mb-3">
+                        <Activity className="w-4 h-4" />
+                        <span className="text-xs font-semibold uppercase tracking-wider">Risk Analysis</span>
+                    </div>
+                    <div className="space-y-2">
+                        {prediction.risk_analysis.map((item, idx) => (
+                            <div key={idx} className="flex items-center text-sm">
+                                <span className="text-gray-300 w-24">
+                                    Target {item.target_return * 100}%
+                                </span>
+                                <div className="flex gap-6">
+                                    <span className="text-green-400 w-20">Buy: {(item.buy_proba * 100).toFixed(0)}%</span>
+                                    <span className="text-red-400 w-20">Sell: {(item.sell_proba * 100).toFixed(0)}%</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-900/50 p-4 rounded-lg">

@@ -7,13 +7,19 @@ import { RefreshCw } from 'lucide-react';
 function App() {
   const [symbol, setSymbol] = useState('BTC/USDT');
   const [timeframe, setTimeframe] = useState('1h');
+  const [targetReturn, setTargetReturn] = useState(0.01);
   const [history, setHistory] = useState<Candle[]>([]);
   const [prediction, setPrediction] = useState<PredictionResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const SYMBOLS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ADA/USDT'];
+  const SYMBOLS = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'ADA/USDT', 'XAUT/USDT'];
   const TIMEFRAMES = ['1h', '4h', '1d'];
+  const TARGET_RETURNS = [
+    { value: 0.01, label: '1%' },
+    { value: 0.02, label: '2%' },
+    { value: 0.05, label: '5%' },
+  ];
 
   const fetchData = async () => {
     setLoading(true);
@@ -21,7 +27,7 @@ function App() {
     try {
       const [historyData, predictionData] = await Promise.all([
         getHistory(100, symbol, timeframe),
-        getPrediction(symbol, timeframe)
+        getPrediction(symbol, timeframe, targetReturn)
       ]);
       setHistory(historyData);
       setPrediction(predictionData);
@@ -37,7 +43,7 @@ function App() {
     fetchData();
     const interval = setInterval(fetchData, 60000); // Refresh every minute
     return () => clearInterval(interval);
-  }, [symbol, timeframe]); // Refetch when symbol or timeframe changes
+  }, [symbol, timeframe, targetReturn]); // Refetch when symbol, timeframe or targetReturn changes
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
@@ -76,20 +82,38 @@ function App() {
             ))}
           </div>
 
-          {/* Timeframe Selector */}
-          <div className="flex gap-2 bg-gray-800 p-1 rounded-lg">
-            {TIMEFRAMES.map((tf) => (
-              <button
-                key={tf}
-                onClick={() => setTimeframe(tf)}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${timeframe === tf
-                  ? 'bg-gray-700 text-white shadow-sm'
-                  : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                {tf.toUpperCase()}
-              </button>
-            ))}
+          <div className="flex gap-4">
+            {/* Timeframe Selector */}
+            <div className="flex gap-2 bg-gray-800 p-1 rounded-lg">
+              {TIMEFRAMES.map((tf) => (
+                <button
+                  key={tf}
+                  onClick={() => setTimeframe(tf)}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${timeframe === tf
+                    ? 'bg-gray-700 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                    }`}
+                >
+                  {tf.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {/* Target Return Selector */}
+            <div className="flex gap-2 bg-gray-800 p-1 rounded-lg">
+              {TARGET_RETURNS.map((tr) => (
+                <button
+                  key={tr.value}
+                  onClick={() => setTargetReturn(tr.value)}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${targetReturn === tr.value
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                    }`}
+                >
+                  {tr.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

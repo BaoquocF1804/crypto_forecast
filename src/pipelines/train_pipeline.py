@@ -14,7 +14,7 @@ except Exception:
 # Import các thư viện tính toán và ML
 import ta
 from xgboost import XGBClassifier
-from sklearn.metrics import classification_report, roc_auc_score, f1_score
+from sklearn.metrics import classification_report, roc_auc_score, f1_score, accuracy_score
 from sklearn.model_selection import TimeSeriesSplit, RandomizedSearchCV
 from src.core.feature_builder import compute_features, FEATURE_COLS
 
@@ -100,9 +100,9 @@ def load_data_from_db(conn, symbol, timeframe):
         logging.error(f"Lỗi khi tải dữ liệu từ DB: {e}")
         return None
 
-def create_features_and_labels(df):
+def create_features_and_labels(df, target_return=0.01):
     """Tạo features và labels từ DataFrame OHLCV (mở rộng)."""
-    logging.info("Đang tính toán features và labels...")
+    logging.info(f"Đang tính toán features và labels (Target Return: {target_return:.1%})...")
     # Bảo đảm có cột 'time'
     df_in = df.copy()
     if 'time' not in df_in.columns:
@@ -112,18 +112,27 @@ def create_features_and_labels(df):
     feats = feats.dropna(subset=FEATURE_COLS)
     feats = feats.set_index('time')
 
-    # Tạo label trên chuỗi close gốc (theo 4h tới >1%)
+    # Tạo label trên chuỗi close gốc (theo 4h tới > target_return)
     price_df = df_in.copy()
     price_df['time'] = pd.to_datetime(price_df['time'], utc=True, errors='coerce')
     price_df = price_df.set_index('time').sort_index()
     future_close = price_df['close'].shift(-4)
     future_return_4h = (future_close - price_df['close']) / price_df['close']
-    labels = (future_return_4h > 0.01).astype(int).to_frame('label')
+    
+    # Labeling:
+    # 0: Neutral
+    # 1: Buy (Return >= target)
+    # 2: Sell (Return <= -target)
+    
+    labels = pd.Series(0, index=future_return_4h.index, name='label')
+    labels[future_return_4h >= target_return] = 1
+    labels[future_return_4h <= -target_return] = 2
 
     # Căn chỉnh theo time (chỉ các hàng có đủ features)
     merged = feats.join(labels, how='inner').dropna()
 
     logging.info("Hoàn tất tính toán features và labels.")
+    logging.info(f"Label distribution:\n{merged['label'].value_counts()}")
 
     X = merged[FEATURE_COLS]
     y = merged['label']
@@ -158,41 +167,26 @@ def tune_hyperparams(X, y, n_splits=5):
         "min_child_weight": [1, 3, 5],
     }
     base_model = XGBClassifier(
-        objective="binary:logistic",
-        eval_metric="logloss",
-        n_jobs=-1,
+        objective="multi:softprob",
+        num_class=3,
+        eval_metric="mlogloss",
+        n_jobs=1,
         tree_method="hist",
     )
     search = RandomizedSearchCV(
         estimator=base_model,
         param_distributions=param_dist,
         n_iter=20,
-        scoring="roc_auc",
+        scoring="f1_weighted", # Changed from neg_log_loss to avoid errors with single-class splits
         cv=tscv,
         verbose=1,
         n_jobs=-1,
         random_state=42,
     )
     search.fit(X, y)
-    logging.info(f"Best AUC: {search.best_score_:.4f}")
+    logging.info(f"Best Score: {search.best_score_:.4f}")
     logging.info(f"Best params: {search.best_params_}")
     return search.best_params_
-
-
-def find_best_threshold(y_true, y_proba):
-    """
-    Quét nhiều threshold để tìm ngưỡng tốt nhất theo F1-score.
-    """
-    best_th = 0.5
-    best_f1 = -1.0
-    for th in np.linspace(0.3, 0.7, 41):  # quét từ 0.3 → 0.7
-        y_pred = (y_proba > th).astype(int)
-        f1 = f1_score(y_true, y_pred)
-        if f1 > best_f1:
-            best_f1 = f1
-            best_th = th
-    logging.info(f"Best threshold: {best_th:.3f} với F1 = {best_f1:.4f}")
-    return best_th
 
 
 def train_and_evaluate(X_train, y_train, X_test, y_test, use_tuning=True):
@@ -213,9 +207,10 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, use_tuning=True):
     logging.info(best_params)
 
     model = XGBClassifier(
-        objective="binary:logistic",
-        eval_metric="logloss",
-        n_jobs=-1,
+        objective="multi:softprob",
+        num_class=3,
+        eval_metric="mlogloss",
+        n_jobs=1,
         tree_method="hist",
         **best_params,
     )
@@ -224,16 +219,19 @@ def train_and_evaluate(X_train, y_train, X_test, y_test, use_tuning=True):
     logging.info("Huấn luyện hoàn tất.")
 
     # Đánh giá
-    y_pred_proba = model.predict_proba(X_test)[:, 1]
-    best_th = find_best_threshold(y_test, y_pred_proba)
-    y_pred = (y_pred_proba > best_th).astype(int)
+    y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)
 
     logging.info("--- Kết quả Đánh giá trên Tập Test ---")
-    print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred, zero_division=0))
+    
+    acc = accuracy_score(y_test, y_pred)
+    logging.info(f"Accuracy: {acc:.4f}")
 
-    auc_score = roc_auc_score(y_test, y_pred_proba)
-    logging.info(f"AUC Score: {auc_score:.4f}")
-    logging.info(f"Threshold sử dụng: {best_th:.3f}")
+    # For multi-class, we don't have a single threshold like binary.
+    # We can save a dummy threshold or just skip it.
+    # Or we can optimize thresholds for each class, but for now let's stick to argmax.
+    best_th = 0.5 
 
     return model, best_th
 
@@ -255,17 +253,25 @@ def main():
     parser = argparse.ArgumentParser(description="Train crypto forecast model")
     parser.add_argument("--symbol", type=str, default="BTC/USDT", help="Symbol to train (e.g. BTC/USDT)")
     parser.add_argument("--timeframe", type=str, default="1h", help="Timeframe to train (e.g. 1h, 4h, 1d)")
+    parser.add_argument("--target_return", type=float, default=0.01, help="Target return percentage (e.g. 0.01 for 1%)")
+    parser.add_argument("--tuning", action="store_true", help="Enable hyperparameter tuning (slow)")
     args = parser.parse_args()
     
     symbol = args.symbol
     timeframe = args.timeframe
+    target_return = args.target_return
+    use_tuning = args.tuning
     coin = symbol.split("/")[0].lower()
     
-    # Dynamic paths
-    model_save_path = f"models/xgb_{coin}_{timeframe}_model.json"
-    threshold_save_path = f"models/threshold_{coin}_{timeframe}.txt"
+    # Format target return for filename (e.g., 0.01 -> 1pct, 0.025 -> 2.5pct)
+    target_return_str = f"{int(target_return*100)}pct" if (target_return*100).is_integer() else f"{target_return*100}pct"
     
-    logging.info(f"Bắt đầu training cho {symbol} ({timeframe})...")
+    # Dynamic paths
+    model_save_path = f"models/xgb_{coin}_{timeframe}_{target_return_str}_model.json"
+    threshold_save_path = f"models/threshold_{coin}_{timeframe}_{target_return_str}.txt"
+    
+    logging.info(f"Bắt đầu training cho {symbol} ({timeframe}) - Target: {target_return:.1%}")
+    logging.info(f"Tuning Mode: {'ENABLED' if use_tuning else 'DISABLED (Using default params)'}")
     logging.info(f"Model sẽ được lưu tại: {model_save_path}")
 
     conn = None
@@ -281,7 +287,7 @@ def main():
             return
 
         # 3. Tạo features và labels
-        X, y = create_features_and_labels(df)
+        X, y = create_features_and_labels(df, target_return=target_return)
         if X.empty:
             logging.error("Không đủ dữ liệu để tạo features/labels.")
             return
@@ -290,7 +296,7 @@ def main():
         X_train, y_train, X_test, y_test = split_data(X, y)
 
         # 5. Huấn luyện và Đánh giá
-        model, best_th = train_and_evaluate(X_train, y_train, X_test, y_test)
+        model, best_th = train_and_evaluate(X_train, y_train, X_test, y_test, use_tuning=use_tuning)
 
         # 6. Lưu mô hình + threshold
         save_model(model, model_save_path)

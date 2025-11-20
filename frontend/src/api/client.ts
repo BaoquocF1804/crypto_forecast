@@ -18,6 +18,12 @@ export interface Candle {
     volume: number;
 }
 
+export interface RiskItem {
+    target_return: number;
+    buy_proba: number;
+    sell_proba: number;
+}
+
 export interface PredictionResponse {
     last_proba: number;
     label: number;
@@ -28,6 +34,10 @@ export interface PredictionResponse {
     rsi?: number;
     macd?: number;
     vol_zscore?: number;
+    target_return?: number;
+    buy_proba?: number;
+    sell_proba?: number;
+    risk_analysis?: RiskItem[];
 }
 
 export const getHistory = async (limit = 100, symbol = 'BTC/USDT', timeframe = '1h') => {
@@ -35,7 +45,7 @@ export const getHistory = async (limit = 100, symbol = 'BTC/USDT', timeframe = '
     return response.data;
 };
 
-export const getPrediction = async (symbol = 'BTC/USDT', timeframe = '1h') => {
-    const response = await api.get<PredictionResponse>(`/predict?symbol=${symbol}&timeframe=${timeframe}`);
+export const getPrediction = async (symbol = 'BTC/USDT', timeframe = '1h', targetReturn = 0.01) => {
+    const response = await api.get<PredictionResponse>(`/predict?symbol=${symbol}&timeframe=${timeframe}&target_return=${targetReturn}`);
     return response.data;
 };
